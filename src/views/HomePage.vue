@@ -22,13 +22,13 @@ const apply = () => {
   <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <div class="p-4 mb-10 shadow-md rounded-lg">
-        <p>Галубой: {{ store.getters.getBlue }}</p>
+        <p>Голубой: {{ store.getters.getBlue }}</p>
         <p>Красный: {{ store.getters.getRed }}</p>
       </div>
       <form class="p-4 shadow-md rounded-lg" @submit.prevent="apply">
         <div class="mb-2">
           <div class="flex items-center justify-between">
-            <label for="blue" class="block text-sm font-medium leading-6 text-gray-900">Галубой</label>
+            <label for="blue" class="block text-sm font-medium leading-6 text-gray-900">Голубой</label>
           </div>
           <div class="mt-2">
             <input

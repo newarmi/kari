@@ -9,6 +9,9 @@ const blueLineRef = ref<SVGPathElement | null>(null)
 const redLineRef = ref<SVGPathElement | null>(null)
 
 const store = useStore()
+let length: number = 1725.2509765625
+
+store.dispatch('updateDataLS')
 
 store.getters.getChannel.addEventListener('message', ({data}: MessageEvent<IUpdateDataEvent>) => {
   store.dispatch('updateData', data)
@@ -16,10 +19,9 @@ store.getters.getChannel.addEventListener('message', ({data}: MessageEvent<IUpda
 
 
 const moveLine = (proc: number, ref: SVGPathElement) => {
-  console.log(proc)
-  const diff = 100 - proc
+  const offset = length * (1 - proc / 100)
   gsap.to(ref, {
-    strokeDasharray: `${proc}% ${diff}%`,
+    strokeDashoffset: offset,
     duration: 5,
     ease: "power1.out"
   });
@@ -29,8 +31,8 @@ watch(() => store.getters.getBlueProc, (val: number) => {
   if (blueLineRef.value) {
     moveLine(val, blueLineRef.value)
   }
-
 })
+
 watch(() => store.getters.getRedProc, (val: number) => {
   if (redLineRef.value) {
     moveLine(val, redLineRef.value)
@@ -38,36 +40,52 @@ watch(() => store.getters.getRedProc, (val: number) => {
 })
 
 onMounted(() => {
-  gsap.set(blueLineRef.value, {
-    strokeDasharray: `0 100%`,
-  });
-  gsap.set(redLineRef.value, {
-    strokeDasharray: `0 100%`,
-  });
+  if (redLineRef.value && blueLineRef.value) {
+    length = redLineRef.value.getTotalLength()
+    console.log(length)
 
-  setTimeout(() => store.dispatch('updateDataLS'))
+    gsap.set(blueLineRef.value, {
+      strokeDasharray: length,
+      strokeDashoffset: length
+    });
+    gsap.set(redLineRef.value, {
+      strokeDasharray: length,
+      strokeDashoffset: length
+    });
+    moveLine(store.getters.getRedProc, redLineRef.value)
+    moveLine(store.getters.getBlueProc, blueLineRef.value)
+  }
 });
 
 </script>
 
 <template>
   <div>
-    <MapComponent>
-      <path ref="blueLineRef"
-            d="M354 677C369 698.833 408.6 751.3 447 768.5C495 790 522.21 821.733 536 837C550 852.5 620 865 648 880.5C676 896 735.5 898.5 846.5 892C957.5 885.5 908.5 955.5 975 989.5C1041.5 1023.5 1406.5 946.5 1502 736.5"
-            stroke="blue" stroke-width="3"/>
+    <MapComponent class="map">
+      <path
+          ref="blueLineRef"
+          d="M351.5 655C348 668.5 397.5 752 447.5 764C497.5 776 507.768 837.5 538 837.5C572 837.5 618.431 887.448 671.5 884.5C725.5 881.5 846 873 875 891C904 909 910.5 982.5 976.5 986C1042.5 989.5 1150.17 1020.5 1214 1020.5C1280.5 1020.5 1514 894.5 1503 740C1525.17 828 1584.9 999.5 1646.5 999.5"
+          stroke="blue"
+          stroke-width="5"
+      />
       <path
           ref="redLineRef"
-          d="M354 677C369 698.833 408.6 751.3 447 768.5C495 790 522.21 821.733 536 837C550 852.5 620 865 648 880.5C676 896 735.5 898.5 846.5 892C957.5 885.5 908.5 955.5 975 989.5C1041.5 1023.5 1406.5 946.5 1502 736.5"
-          stroke="red" stroke-width="3"
-          transform="translate(0, 4)"
+          d="M351.5 655C348 668.5 397.5 752 447.5 764C497.5 776 507.768 837.5 538 837.5C572 837.5 618.431 887.448 671.5 884.5C725.5 881.5 846 873 875 891C904 909 910.5 982.5 976.5 986C1042.5 989.5 1150.17 1020.5 1214 1020.5C1280.5 1020.5 1514 894.5 1503 740C1525.17 828 1584.9 999.5 1646.5 999.5"
+          stroke="red"
+          stroke-width="5"
+          transform="translate(0, 10)"
       />
     </MapComponent>
-
-
   </div>
 </template>
 
 <style scoped>
+.map {
+  width: 100%;
+  height: auto;
+}
 
+path {
+  fill: none;
+}
 </style>
