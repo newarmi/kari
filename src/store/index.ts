@@ -6,7 +6,10 @@ export type IUpdateDataEvent = {
 }
 export default createStore({
     state: {
-        channel: new BroadcastChannel('shared-channel'), blue: 0, red: 0, max: 10000,
+        channel: new BroadcastChannel('shared-channel'),
+        blue: 0,
+        red: 0,
+        max: 10000,
     },
 
     getters: {
@@ -22,7 +25,8 @@ export default createStore({
     mutations: {
         setRed(state, val: number) {
             state.red = val;
-        }, setBlue(state, val: number) {
+        },
+        setBlue(state, val: number) {
             state.blue = val;
         },
     },
@@ -41,10 +45,12 @@ export default createStore({
 
         saveData({state: {red, blue}}) {
             localStorage.setItem('data', JSON.stringify({red, blue}))
-        }, updateData({commit}, {red, blue}) {
+        },
+        updateData({commit}, {red, blue}) {
             commit('setRed', red);
             commit('setBlue', blue);
-        }, updateDataLS({dispatch}) {
+        },
+        updateDataLS({dispatch}) {
             const data = localStorage.getItem('data')
             if (data) {
                 dispatch('updateData', JSON.parse(data) as IUpdateDataEvent)
